@@ -2,11 +2,15 @@ var currentDayEl = $('#currentDay');
 var taskDisplayEl = $('#task-display');
 var taskTextInputEl = $('#task-text-input');
 var taskDateInput = $('task-date-input');
+var idList = ["hour-9", "hour-10", "hour-11", "hour-12", "hour-13", "hour-14", "hour-15", "hour-16", "hour-17"];
+var buttons = document.querySelectorAll('.saveBtn');
+var customParseFormat = require('dayjs/plugin/customParseFormat')
+dayjs.extend(customParseFormat)
 
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
-$(function () {
+$(function(){
   // TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
   // local storage. HINT: What does `this` reference in the click listener
@@ -18,21 +22,36 @@ $(function () {
   // block by comparing the id to the current hour. HINTS: How can the id
   // attribute of each time-block be used to conditionally add or remove the
   // past, present, and future classes? How can Day.js be used to get the
-  // current hour in 24-hour time?
+  // current hour in 24-hour time?  Solved in analyzeTimeandModifyClasses function.
   //
   // TODO: Add code to get any user input that was saved in localStorage and set
   // the values of the corresponding textarea elements. HINT: How can the id
   // attribute of each time-block be used to do this?
-});
 
 // Sets current time in DOW then month and ordinal day format
-function displayTime() { 
-  var rightNow = dayjs().day() + dayjs().format('MMM Do')
+function displayTime() {  
+  var rightNow = dayjs().format('dddd, MMMM Do');
   currentDayEl.text(rightNow);
 }
 
-// Add function to comparee dayJS and determine past/present/future
-// Function will need to add/remove classes to timeslot divs to change bg color styling for those rows in text-area class
+function analyzeTimeandModifyClasses() {
+  var currentTime = dayjs();
+  var currentHour = currentTime.hour();
+  
+  idList.forEach(function(id) {
+    var hourID = document.getElementById(id);
+    var time = hourID.getAttribute('data-time');
+    var hour = parseInt(time.split(':')[0]);
+
+    if (hour === currentHour) {
+      hourID.classList.add('present');
+    } else if {
+      hourID.classList.add('past');
+    } else if {
+      hourID.classList.add('future');
+    }
+  });
+}
 
 // Reads tasks from local storage and returns array of task objects.
 // Returns an empty array if there aren't any objects
@@ -81,13 +100,9 @@ function printTaskData() {
 function handleTaskFormSubmit(event) {
   event.preventDefault();
 
-  // Read user input from the form
-  var taskInput = taskTextInputEl.val().trim();
-  var taskDate = taskDateInputEl.val(); //needs code to identify which timeslot to save to appropriate timeslot
-
   var newTask = {
-  text: taskInput,
-  date: taskDate,
+    text: taskText,
+    time: div.id,
   };
 
   // Add project to local storage
@@ -100,10 +115,25 @@ function handleTaskFormSubmit(event) {
 }
 
 // Event listener for Save click
-taskDisplayEl.on('save', handleTaskFormSubmit); 
+buttons.forEach(function(button) {
+  button.addEventListener('click', function(event) {
+    var parentDiv = event.target.closest('.time-block');
+    var divID = div.id;
+    var parentTextArea = event.target.closest('description');
+    var taskText = parentTextArea.val().trim();
+    var saveTask = {
+    text: taskText,
+    time: div.id,
+    };
+    handleTaskFormSubmit();
+});
+
 
 // Event listener for delete task click
 taskDisplayEl.on('click', '.btn-delete-task', handleDeleteTask); 
 
 displayTime();
 setInternal(displayTime, 1000);
+analyzeTimeandModifyClasses();
+printTaskData();
+});
