@@ -3,14 +3,13 @@ var taskDisplayEl = $('#task-display');
 var taskTextInputEl = $('#task-text-input');
 var taskDateInput = $('task-date-input');
 var idList = ["hour-9", "hour-10", "hour-11", "hour-12", "hour-13", "hour-14", "hour-15", "hour-16", "hour-17"];
-var buttons = document.querySelectorAll('.saveBtn');
-var customParseFormat = require('dayjs/plugin/customParseFormat')
-dayjs.extend(customParseFormat)
+var buttons = document.querySelectorAll('.btn saveBtn');
+
 
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
-$(function(){
+
   // TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
   // local storage. HINT: What does `this` reference in the click listener
@@ -28,9 +27,9 @@ $(function(){
   // the values of the corresponding textarea elements. HINT: How can the id
   // attribute of each time-block be used to do this?
 
-// Sets current time in DOW then month and ordinal day format
+// Sets current time in DOM then month and ordinal day format
 function displayTime() {  
-  var rightNow = dayjs().format('dddd, MMMM Do');
+  var rightNow = dayjs().format('dddd, MMMM DD [at] hh:mm A');
   currentDayEl.text(rightNow);
 }
 
@@ -45,9 +44,9 @@ function analyzeTimeandModifyClasses() {
 
     if (hour === currentHour) {
       hourID.classList.add('present');
-    } else if {
+    } else if (hour < currentHour) {
       hourID.classList.add('past');
-    } else if {
+    } else {
       hourID.classList.add('future');
     }
   });
@@ -77,24 +76,9 @@ function printTaskData() {
 
   // Get tasks from localStorage
   var tasks = readTasksFromStorage();
-
-  // Loop through each task and create a row
-  for (var i = 0; i < tasks.length; i += 1) {
-    var task = tasks[i];
-    var taskDate = dayjs(task.date);
-    var currentTime = dayjs() //finish dayJS statement
-    // Create rows for tasks
-    var rowEl = $('<tr>');
-    var taskEl = $('<td>').text(task.text);
-    var dateEl = $('<td>').text(task.date); //will need comparator to dayJS to assign task to proper timeslot
-
-    var deleteEl = $(
-      <button class="btn btn-sm btn-delete-task" data-index="' + i + '">X</button>
-    );
-
     // Add class to formatting - likely to use rows to populate data, need to storyboard layout (started above)
-  }
-}
+  };
+
 
 // Adds task to local storage and prints the task data
 function handleTaskFormSubmit(event) {
@@ -127,13 +111,12 @@ buttons.forEach(function(button) {
     };
     handleTaskFormSubmit();
 });
+});
 
-
-// Event listener for delete task click
-taskDisplayEl.on('click', '.btn-delete-task', handleDeleteTask); 
+// Event listener for delete task click; commented out below line for testing
+// taskDisplayEl.on('click', '.btn-delete-task', handleDeleteTask); 
 
 displayTime();
-setInternal(displayTime, 1000);
+setInterval(displayTime, 1000);
 analyzeTimeandModifyClasses();
 printTaskData();
-});
