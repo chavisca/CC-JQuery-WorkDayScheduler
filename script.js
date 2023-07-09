@@ -1,7 +1,4 @@
 var currentDayEl = $('#currentDay');
-var taskDisplayEl = $('#task-display');
-var taskTextInputEl = $('#task-text-input');
-var taskDateInput = $('task-date-input');
 var idList = ["hour-9", "hour-10", "hour-11", "hour-12", "hour-13", "hour-14", "hour-15", "hour-16", "hour-17"];
 var buttons = document.querySelectorAll('.btn saveBtn');
 
@@ -9,6 +6,7 @@ var buttons = document.querySelectorAll('.btn saveBtn');
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
+$(function() {
 
   // TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
@@ -52,71 +50,43 @@ function analyzeTimeandModifyClasses() {
   });
 }
 
-// Reads tasks from local storage and returns array of task objects.
-// Returns an empty array if there aren't any objects
-function readTasksFromStorage() {
-  var tasks = localStorage.getItem('tasks');
-  if (tasks) {
-    tasks = JSON.parse(tasks);
-  } else {
-    tasks = [];
-  }
-  return tasks;
+// Save button click event
+function saveButtonClick(event) {
+  var textarea = event.target.parentNode.parentNode.querySelector('.description');
+  var textareaID = textarea.id;
+  var textareaValue = textarea.value;
+
+// Check for existing storage
+var existingValue = localStorage.getItem(textareaID);
+if (existingValue) {
+  localStorage.removeItem(textareaID);
 }
 
-// Takes an array of tasks and saves them in localStorage.
-function saveTasksToStorage(tasks) {
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+// Save text area to local storage
+localStorage.setItem(textareaID, textareaValue);
 }
 
-// Gets Task data from local storage and displays it - function may require multiple loops to run by each timeslot div-ID
-function printTaskData() {
-  // Clear current tasks on page
-  taskDisplayEl.empty();
+// Retrieve saved data from local storage and display
+function displayTaskFromLocalStorage() {
+  var textareas = document.querySelectorAll('.description');
+  textareas.forEach(function(textarea) {
+    var textareaID = textarea.id;
+    var savedValue = localStorage.getItem(textareaID);
 
-  // Get tasks from localStorage
-  var tasks = readTasksFromStorage();
-    // Add class to formatting - likely to use rows to populate data, need to storyboard layout (started above)
-  };
-
-
-// Adds task to local storage and prints the task data
-function handleTaskFormSubmit(event) {
-  event.preventDefault();
-
-  var newTask = {
-    text: taskText,
-    time: div.id,
-  };
-
-  // Add project to local storage
-  var tasks = readTasksFromStorage();
-  tasks.push(newTask);
-  saveTasksToStorage(tasks);
-
-  // Print Task Data
-  printTaskData();
+    if (savedValue) {
+      textarea.value = savedValue;
+    }
+  });
 }
 
-// Event listener for Save click
-buttons.forEach(function(button) {
-  button.addEventListener('click', function(event) {
-    var parentDiv = event.target.closest('.time-block');
-    var divID = div.id;
-    var parentTextArea = event.target.closest('description');
-    var taskText = parentTextArea.val().trim();
-    var saveTask = {
-    text: taskText,
-    time: div.id,
-    };
-    handleTaskFormSubmit();
+// Click events for all save buttons
+var saveButtons = document.querySelectorAll('.saveBtn');
+saveButtons.forEach(function(button) {
+  button.addEventListener('click', saveButtonClick);
 });
-});
-
-// Event listener for delete task click; commented out below line for testing
-// taskDisplayEl.on('click', '.btn-delete-task', handleDeleteTask); 
 
 displayTime();
 setInterval(displayTime, 1000);
 analyzeTimeandModifyClasses();
-printTaskData();
+displayTaskFromLocalStorage();
+});
