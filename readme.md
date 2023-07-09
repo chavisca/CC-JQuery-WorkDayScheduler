@@ -3,6 +3,7 @@
 ## Description
 
 This project is meant to demonstrate the capabilities of JQuery to dynamically update HTML and CSS.  
+This project also demonstrates how to store and retrieve data from localStorage and how to direct locations using element IDs.  
 The goal is to refactor code to create a simple calendar app that allows a user to save events for each hour of a typical working day (9a - 5p).  
 
 ## Credits
